@@ -1,33 +1,59 @@
 <script lang="ts">
 	import Taskcard from './taskcard.svelte'
+	import { invoke } from '@tauri-apps/api'
 	import type { Task } from '@/lib/type'
-	let tabs: string[] = ["Task", "Compleated"]
+	export let tasklist: string
+	const tabs: string[] = ["Tasks", "Done"]
 	let active = tabs[0]
 
-	let uid = 1
 	let tasks: Task[] = []
 
-	function add(input: any) {
-		console.log()
-		const task = {
-			id: (uid++).toString(),
-			compleated: false,
-			title: input.value
-		};
+	let saved = true
+	let saveTimes = 0
+	let saveTimeout: string|number|NodeJS.Timeout
+
+	$: tasks, startSaveTimer()
+	$: tasklist, changeTaskList()
+
+	function startSaveTimer() {
+		if (saveTimes <= 1) {
+			saveTimes += 1
+			return
+		}
+		saved = false
+		clearTimeout(saveTimeout),
+		saveTimeout = setTimeout(writeList, 30e3)
+		console.log("timer")
+	}
+	async function changeTaskList() {
+		if (!saved) {
+			clearTimeout(saveTimeout)
+			writeList()
+		}
+		tasks = []
+		tasks = JSON.parse(await invoke('load_file', {name: tasklist}))
+		saved = true
+		saveTimes = 1
+	}
+	async function add(input: any) {
+		const task: Task = await invoke('new_task', {title: input.value})
+		let lists = await invoke('load_file', {name: tasklist})
 
 		tasks = [task, ...tasks]
 		input.value = ''
 	}
-
 	function remove(task: Task) {
-		console.log(typeof(task))
 		tasks = tasks.filter(t => t !== task)
 	}
-
 	function mark(task: Task) {
 		task.compleated = !task.compleated
 		remove(task)
 		tasks = [task, ...tasks]
+	}
+	function writeList() {
+		invoke('write_file', {name: tasklist, content: JSON.stringify(tasks)})
+		saved = true
+		console.log("Saved")
 	}
 </script>
 

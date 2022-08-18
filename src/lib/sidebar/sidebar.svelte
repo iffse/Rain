@@ -1,6 +1,7 @@
 <script lang="ts">
-	let tasklists: string[] = ['Academic', 'Personal']
-	let active: string = 'Dashboard'
+	export let specialTabs: string[]
+	export let tasklists: string[]
+	export let active: string = specialTabs[0]
 </script>
 
 <aside class="menu">
@@ -9,12 +10,14 @@
 	</p>
 	<ul class="menu-list">
 		<li>
-			<a
-				class:is-active="{active === 'Dashboard'}"
-				on:click="{() => active = 'Dashboard'}"
-				>
-				Dashboard
-			</a>
+			{#each specialTabs as tab}
+				<a
+					class:is-active="{active === tab}"
+					on:click="{() => active = tab}"
+					>
+					{tab}
+				</a>
+			{/each}
 		</li>
 	</ul>
 	<p class="menu-label">
