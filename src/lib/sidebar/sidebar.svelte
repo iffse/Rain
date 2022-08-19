@@ -7,9 +7,12 @@
 	let newInput = false
 
 	function addList(input: any) {
-		tasklists = [...tasklists, input.value]
+		let name: string = input.value.replace(/[^A-zÀ-ž0-9:.]/g, '')
 		input.value = ''
 		newInput = false
+
+		if (name == '' || tasklists.includes(name)) { return }
+		tasklists = [...tasklists, name]
 	}
 </script>
 

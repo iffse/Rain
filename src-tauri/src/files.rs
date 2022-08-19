@@ -42,7 +42,7 @@ pub fn load_file(name: String) -> String {
 pub fn write_file(name: String, content: String) {
 	let mut path = data_dir().unwrap();
 	path.push(LISTS_DIR);
-	if let Err(res) = read_dir(&path) {
+	if let Err(_) = read_dir(&path) {
 		create_dir_all(&path).unwrap();
 	}
 	path.push(name);
