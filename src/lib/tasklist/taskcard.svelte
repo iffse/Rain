@@ -11,7 +11,7 @@
 
 <div class="card">
 	<header class="card-header">
-		<button class="card-header-icon" aria-label="more options" on:click="{mark}">
+		<button class="card-header-icon" aria-label="toggle" on:click="{mark}">
 			<span class="icon">
 				{#if task.compleated == false}
 					<i class="fa-regular fa-circle"aria-hidden="true"></i>
@@ -23,7 +23,7 @@
 		<p class="card-header-title">
 			{task.title}
 		</p>
-		<button class="card-header-icon" aria-label="more options">
+		<button class="card-header-icon" aria-label="more">
 			<span class="icon">
 				<i class="fas fa-angle-down" aria-hidden="true"></i>
 			</span>

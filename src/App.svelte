@@ -4,18 +4,18 @@
 	import Sidebar from './lib/sidebar/sidebar.svelte'
 	import Tasklist from './lib/tasklist/tasklist.svelte'
 
-	let specialTabs: string[] = ['Dashboard', 'Important']
+	let specialTabs: string[] = ['Dashboard']
 	let tasklists: string[] = []
 
-	let activeTab: string
-	rustCalls()
+	let activeTab: string = specialTabs[0]
 
+	rustCalls()
 	async function rustCalls() {
 		tasklists = await invoke('get_filenames')
 	}
 </script>
 <main>
-	<Sidebar bind:active={activeTab} {specialTabs} {tasklists}/>
+	<Sidebar bind:active={activeTab} bind:specialTabs {tasklists}/>
 	{#if tasklists.includes(activeTab)}
 		<Tasklist tasklist={activeTab}/>
 	{/if}

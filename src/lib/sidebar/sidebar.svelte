@@ -2,6 +2,15 @@
 	export let specialTabs: string[]
 	export let tasklists: string[]
 	export let active: string = specialTabs[0]
+	
+	import { clickOutSide } from '@/lib/events'
+	let newInput = false
+
+	function addList(input: any) {
+		tasklists = [...tasklists, input.value]
+		input.value = ''
+		newInput = false
+	}
 </script>
 
 <aside class="menu">
@@ -34,6 +43,22 @@
 				</a>
 			</li>
 		{/each}
+		{#if !newInput}
+		<button class="button is-text" aria-label="new list" on:click={() => {newInput = true}}>
+			<span class="icon-text">
+				<span class="icon">
+					<i class="fas fa-plus"></i>
+				</span>
+				<span>New</span>
+			</span>
+		</button>
+		{:else}
+		<input
+			class="input" type="text" placeholder="Add a new task"
+			on:keydown={e => e.key === 'Enter' && addList(e.target)}
+			use:clickOutSide on:outclick="{() => (newInput = false)}"
+			>
+		{/if}
 	</ul>
 </aside>
 
@@ -48,5 +73,8 @@
 		height: 100vh;
 		overflow-y: auto;
 		scrollbar-width: none;
+	}
+	button {
+		margin-left: 5px;
 	}
 </style>

@@ -2,6 +2,7 @@
 	import Taskcard from './taskcard.svelte'
 	import { invoke } from '@tauri-apps/api'
 	import type { Task } from '@/lib/type'
+	import { onDestroy } from 'svelte';
 	export let tasklist: string
 	const tabs: string[] = ["Tasks", "Done"]
 	let active = tabs[0]
@@ -9,14 +10,21 @@
 	let tasks: Task[] = []
 
 	let saved = true
-	let saveTimes = 0
+	let saveTimes = -1
 	let saveTimeout: string|number|NodeJS.Timeout
 
 	$: tasks, startSaveTimer()
 	$: tasklist, changeTaskList()
 
+	onDestroy(() => {
+		if (!saved) {
+			clearTimeout(saveTimeout)
+			writeList()
+		}
+	})
+
 	function startSaveTimer() {
-		if (saveTimes <= 1) {
+		if (saveTimes < 1) {
 			saveTimes += 1
 			return
 		}
@@ -30,12 +38,15 @@
 			clearTimeout(saveTimeout)
 			writeList()
 		}
-		tasks = []
-		tasks = JSON.parse(await invoke('load_file', {name: tasklist}))
+		try {
+			tasks = JSON.parse(await invoke('load_file', {name: tasklist}))
+		} catch (e) {
+			tasks = []
+		}
 		saved = true
-		saveTimes = 1
+		saveTimes = 0
 	}
-	async function add(input: any) {
+	async function addTask(input: any) {
 		const task: Task = await invoke('new_task', {title: input.value})
 		let lists = await invoke('load_file', {name: tasklist})
 
@@ -72,7 +83,7 @@
 	</div>
 
 	{#if active == tabs[0]}
-		<input class="input" type="text" placeholder="Add a new task" on:keydown={e => e.key === 'Enter' && add(e.target)}>
+		<input class="input" type="text" placeholder="Add a new task" on:keydown={e => e.key === 'Enter' && addTask(e.target)}>
 		{#each tasks.filter(t => !t.compleated) as task}
 			<Taskcard {task} on:mark="{() => mark(task)}" />
 		{/each}
