@@ -1,6 +1,10 @@
+.DEFAULT_GOAL := run
+
 install:
 	npm install
-	npm install --save-dev @tauri-apps/cli
 
 run: install
 	npx tauri dev
+
+build: install
+	npx tauri build

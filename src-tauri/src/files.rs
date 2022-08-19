@@ -9,13 +9,12 @@ pub fn get_filenames() -> Vec<String> {
 	let mut path = data_dir().unwrap();
 	path.push(LISTS_DIR);
 
-	let entries;
-	if let Ok(res) = read_dir(&path) {
-		entries = res;
+	let entries = if let Ok(res) = read_dir(&path) {
+		res
 	} else {
 		create_dir_all(path).unwrap();
 		return Vec::new();
-	}
+	};
 
 	let mut lists: Vec<String> = Vec::new();
 	for entry in entries {
@@ -42,7 +41,7 @@ pub fn load_file(name: String) -> String {
 pub fn write_file(name: String, content: String) {
 	let mut path = data_dir().unwrap();
 	path.push(LISTS_DIR);
-	if let Err(_) = read_dir(&path) {
+	if read_dir(&path).is_err() {
 		create_dir_all(&path).unwrap();
 	}
 	path.push(name);

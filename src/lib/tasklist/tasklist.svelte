@@ -32,7 +32,6 @@
 		saved = false
 		clearTimeout(saveTimeout),
 		saveTimeout = setTimeout(writeList, 30e3)
-		console.log("timer")
 	}
 	async function changeTaskList() {
 		if (!saved) {
@@ -50,7 +49,6 @@
 	}
 	async function addTask(input: any) {
 		const task: Task = await invoke('new_task', {title: input.value})
-		let lists = await invoke('load_file', {name: tasklist})
 
 		tasks = [task, ...tasks]
 		input.value = ''
@@ -66,7 +64,6 @@
 	function writeList() {
 		invoke('write_file', {name: list, content: JSON.stringify(tasks)})
 		saved = true
-		console.log("Saved " + list)
 	}
 </script>
 
@@ -85,19 +82,31 @@
 	</div>
 
 	{#if active == tabs[0]}
-		<input class="input" type="text" placeholder="Add a new task" on:keydown={e => e.key === 'Enter' && addTask(e.target)}>
-		{#each tasks.filter(t => !t.compleated) as task}
-			<Taskcard {task} on:mark="{() => mark(task)}" />
-		{/each}
+		<input class="input" type="text" placeholder="Add a new task"
+			on:keydown={e => e.key === 'Enter' && addTask(e.target)}>
+		<div class="tasks">
+			{#each tasks.filter(t => !t.compleated) as task}
+				<Taskcard {task} on:mark="{() => mark(task)}" />
+			{/each}
+		</div>
 	{:else}
-		{#each tasks.filter(t => t.compleated) as task}
-			<Taskcard {task} on:mark="{() => mark(task)}" />
-		{/each}
+		<div class="tasks">
+			{#each tasks.filter(t => t.compleated) as task}
+				<Taskcard {task} on:mark="{() => mark(task)}" />
+			{/each}
+		</div>
 	{/if}
 </div>
 
 <style>
 	.tasklist {
-		margin-left: 180px;
+		margin-left: 200px;
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+	}
+	.tasks {
+		margin-top: 10px;
+		overflow-y: scroll;
 	}
 </style>

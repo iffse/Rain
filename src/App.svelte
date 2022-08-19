@@ -20,3 +20,10 @@
 		<Tasklist tasklist={activeTab}/>
 	{/if}
 </main>
+
+<style>
+	main {
+		height: 100%;
+		overflow-y: scroll;
+	}
+</style>

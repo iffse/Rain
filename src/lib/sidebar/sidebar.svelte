@@ -73,9 +73,9 @@
 		text-align: left;
 		padding: 10px;
 		width: 200px;
-		height: 100vh;
-		overflow-y: auto;
-		scrollbar-width: none;
+		height: 100%;
+		overflow-y: scroll;
+		scrollbar-width: 0;
 	}
 	button {
 		margin-left: 5px;
