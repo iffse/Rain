@@ -1,4 +1,4 @@
-use std::fs::{read_dir, read_to_string, write};
+use std::fs::{read_dir, read_to_string, write, create_dir_all};
 use tauri::command;
 use tauri::api::path::data_dir;
 
@@ -9,9 +9,15 @@ pub fn get_filenames() -> Vec<String> {
 	let mut path = data_dir().unwrap();
 	path.push(LISTS_DIR);
 
-	let entries = read_dir(path).unwrap();
-	let mut lists: Vec<String> = Vec::new();
+	let entries;
+	if let Ok(res) = read_dir(&path) {
+		entries = res;
+	} else {
+		create_dir_all(path).unwrap();
+		return Vec::new();
+	}
 
+	let mut lists: Vec<String> = Vec::new();
 	for entry in entries {
 		let name = entry.unwrap().file_name().into_string().unwrap();
 		lists.push(name);
@@ -25,14 +31,21 @@ pub fn load_file(name: String) -> String {
 	file.push(LISTS_DIR);
 	file.push(name);
 
-	read_to_string(file).unwrap()
+	if let Ok(file) = read_to_string(file) {
+		file
+	} else {
+		String::from("")
+	}
 }
 
 #[command]
 pub fn write_file(name: String, content: String) {
-	let mut file = data_dir().unwrap();
-	file.push(LISTS_DIR);
-	file.push(name);
+	let mut path = data_dir().unwrap();
+	path.push(LISTS_DIR);
+	if let Err(res) = read_dir(&path) {
+		create_dir_all(&path).unwrap();
+	}
+	path.push(name);
 
-	write(file, content).unwrap();
+	write(path, content).unwrap();
 }

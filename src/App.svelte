@@ -15,7 +15,7 @@
 	}
 </script>
 <main>
-	<Sidebar bind:active={activeTab} bind:specialTabs {tasklists}/>
+	<Sidebar {specialTabs} bind:tasklists bind:active={activeTab}/>
 	{#if tasklists.includes(activeTab)}
 		<Tasklist tasklist={activeTab}/>
 	{/if}

@@ -12,6 +12,7 @@
 	let saved = true
 	let saveTimes = -1
 	let saveTimeout: string|number|NodeJS.Timeout
+	let list = tasklist
 
 	$: tasks, startSaveTimer()
 	$: tasklist, changeTaskList()
@@ -45,6 +46,7 @@
 		}
 		saved = true
 		saveTimes = 0
+		list = tasklist
 	}
 	async function addTask(input: any) {
 		const task: Task = await invoke('new_task', {title: input.value})
@@ -62,9 +64,9 @@
 		tasks = [task, ...tasks]
 	}
 	function writeList() {
-		invoke('write_file', {name: tasklist, content: JSON.stringify(tasks)})
+		invoke('write_file', {name: list, content: JSON.stringify(tasks)})
 		saved = true
-		console.log("Saved")
+		console.log("Saved " + list)
 	}
 </script>
 

@@ -55,7 +55,7 @@
 		{:else}
 		<input
 			class="input" type="text" placeholder="Add a new task"
-			on:keydown={e => e.key === 'Enter' && addList(e.target)}
+			on:keydown="{e => e.key === 'Enter' && addList(e.target)}"
 			use:clickOutSide on:outclick="{() => (newInput = false)}"
 			>
 		{/if}
