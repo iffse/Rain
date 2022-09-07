@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Taskcard from './taskcard.svelte'
 	import { invoke } from '@tauri-apps/api'
-	import type { Task } from '@/lib/type'
+	import type { Task } from '@/lib/shared/type'
 	import { onDestroy } from 'svelte';
 	export let tasklist: string
 	const tabs: string[] = ["Tasks", "Done"]
@@ -82,13 +82,13 @@
 	</div>
 
 	{#if active == tabs[0]}
-		<input class="input" type="text" placeholder="Add a new task"
-			on:keydown={e => e.key === 'Enter' && addTask(e.target)}>
 		<div class="tasks">
 			{#each tasks.filter(t => !t.compleated) as task}
 				<Taskcard {task} on:mark="{() => mark(task)}" />
 			{/each}
 		</div>
+		<input class="input" type="text" placeholder="Add a new task" style="bottom: 10px;"
+			on:keydown={e => e.key === 'Enter' && addTask(e.target)}>
 	{:else}
 		<div class="tasks">
 			{#each tasks.filter(t => t.compleated) as task}
@@ -100,13 +100,12 @@
 
 <style>
 	.tasklist {
-		margin-left: 200px;
 		height: 100%;
 		display: flex;
 		flex-direction: column;
 	}
 	.tasks {
-		margin-top: 10px;
 		overflow-y: scroll;
+		height: 100%;
 	}
 </style>

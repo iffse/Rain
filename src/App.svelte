@@ -1,10 +1,11 @@
 <script lang="ts">
 	import '@/app.scss'
 	import { invoke } from '@tauri-apps/api/tauri';
-	import Sidebar from './lib/sidebar/sidebar.svelte'
-	import Tasklist from './lib/tasklist/tasklist.svelte'
+	import Sidebar from './lib/components/sidebar.svelte'
+	import Tasklist from './lib/components/tasklist.svelte'
+	import Dashboard from './lib/components/dashboard.svelte'
 
-	let specialTabs: string[] = ['Dashboard']
+	const specialTabs: string[] = ['Dashboard']
 	let tasklists: string[] = []
 
 	let activeTab: string = specialTabs[0]
@@ -16,13 +17,23 @@
 </script>
 <main>
 	<Sidebar {specialTabs} bind:tasklists bind:active={activeTab}/>
-	{#if tasklists.includes(activeTab)}
-		<Tasklist tasklist={activeTab}/>
-	{/if}
+	<div class="tab-content">
+		{#if activeTab == specialTabs[0]}
+			<Dashboard/>
+		{/if}
+		{#if tasklists.includes(activeTab)}
+			<Tasklist tasklist={activeTab}/>
+		{/if}
+	</div>
 </main>
 
 <style>
 	main {
+		height: 100%;
+		overflow-y: scroll;
+	}
+	.tab-content {
+		margin-left: 200px;
 		height: 100%;
 		overflow-y: scroll;
 	}

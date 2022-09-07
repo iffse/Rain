@@ -3,7 +3,7 @@
 	export let tasklists: string[]
 	export let active: string = specialTabs[0]
 	
-	import { clickOutSide } from '@/lib/events'
+	import { clickOutSide } from '@/lib/shared/events'
 	let newInput = false
 
 	function addList(input: any) {
@@ -47,7 +47,7 @@
 			</li>
 		{/each}
 		{#if !newInput}
-		<button class="button is-text" aria-label="new list" on:click={() => {newInput = true}}>
+		<button class="button is-text" aria-label="new list" on:click="{() => newInput = true}">
 			<span class="icon-text">
 				<span class="icon">
 					<i class="fas fa-plus"></i>
