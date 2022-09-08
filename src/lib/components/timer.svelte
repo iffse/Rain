@@ -5,7 +5,7 @@
 	$: {
 		timer.remainingTime.subscribe((time) => {
 			m = Math.floor(time / 60).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
-			s = (time % 60).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
+			s = Math.floor(time % 60).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
 		});
 	}
 
@@ -13,25 +13,30 @@
 	$: timer.active.subscribe((a) => active = a);
 	let paused: boolean
 	$: timer.paused.subscribe((p) => paused = p);
+
+	let width: number
 </script>
 
-<h3 class="title is-1">
-	{m}:{s}
-</h3>
+<div class="timer" bind:clientWidth="{width}">
+	<h3 style="font-size: {width / 5}px">
+		{m}:{s}
+	</h3>
 
-<div class="buttons">
-	{#if !active}
-		<button class="button is-primary" on:click="{() => timer.startTimer()}">Start timer</button>
-	{:else}
-		{#if !paused}
-			<button class="button is-warning">Pause</button>
+	<div class="buttons">
+		{#if !active}
+			<button class="button is-primary" on:click="{() => timer.startTimer()}">Start timer</button>
 		{:else}
-			<button class="button is-primary">Continue</button>
+			{#if !paused}
+				<button class="button is-warning" on:click="{() => timer.pauseTimer()}">Pause</button>
+			{:else}
+				<button class="button is-primary" on:click="{() => timer.startTimer()}">Continue</button>
+			{/if}
+			<button class="button is-danger" on:click="{() => timer.stopTimer()}">Stop</button>
 		{/if}
-		<button class="button is-danger" on:click="{() => timer.stopTimer()}">Stop</button>
-	{/if}
-</div>
+	</div>
 
+
+</div>
 <style>
 	.buttons {
 		display: inline-block;
