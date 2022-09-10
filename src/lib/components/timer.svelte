@@ -1,43 +1,66 @@
 <script lang="ts">
-	import * as timer from '@/lib/stores/timer';
+	import * as timer from '@/lib/stores/timer'
+	import Icon from '@/lib/slots/icon.svelte'
 	
 	let m: string, s: string;
 	$: {
 		timer.remainingTime.subscribe((time) => {
-			m = Math.floor(time / 60).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
-			s = Math.floor(time % 60).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
-		});
+			m = Math.floor(time / 60).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false})
+			s = Math.floor(time % 60).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false})
+		})
 	}
 
 	let active: boolean
-	$: timer.active.subscribe((a) => active = a);
+	$: timer.active.subscribe((a) => active = a)
 	let paused: boolean
-	$: timer.paused.subscribe((p) => paused = p);
+	$: timer.paused.subscribe((p) => paused = p)
+	let compleatedCount: number
+	$: timer.compleatedCount.subscribe((c) => compleatedCount = c)
 
 	let width: number
+
+	$: iconSize = width/300 > 2 ? width/300 : 2
 </script>
 
 <div class="timer" bind:clientWidth="{width}">
-	<h3 style="font-size: {width / 5}px">
+	<h3 style="font-size: {width / 75}em">
 		{m}:{s}
 	</h3>
 
 	<div class="buttons">
 		{#if !active}
-			<button class="button is-primary" on:click="{() => timer.startTimer()}">Start timer</button>
+			<Icon size={iconSize}>
+				<i class="fa-regular fa-play" aria-hidden="true" on:click="{() => timer.startTimer()}"></i>
+			</Icon>
 		{:else}
+			<Icon size={iconSize}>
+				<i class="fa-regular fa-stop" aria-hidden="true" on:click="{() => timer.stopTimer()}"></i>
+			</Icon>
 			{#if !paused}
-				<button class="button is-warning" on:click="{() => timer.pauseTimer()}">Pause</button>
+				<Icon size={iconSize}>
+					<i class="fa-regular fa-pause" aria-hidden="true" on:click="{() => timer.pauseTimer()}"></i>
+				</Icon>
 			{:else}
-				<button class="button is-primary" on:click="{() => timer.startTimer()}">Continue</button>
+				<Icon size={iconSize}>
+					<i class="fa-regular fa-play" aria-hidden="true" on:click="{() => timer.startTimer()}"></i>
+				</Icon>
 			{/if}
-			<button class="button is-danger" on:click="{() => timer.stopTimer()}">Stop</button>
+			<Icon size={iconSize}>
+				<i class="fa-regular fa-forward" aria-hidden="true"></i>
+			</Icon>
 		{/if}
 	</div>
 
+	{#if compleatedCount > 0}
+	{compleatedCount} {compleatedCount < 2 ? 'round' : 'rounds'} compleated!
+	{/if}
 </div>
+
 <style>
-	.buttons {
-		display: inline-block;
+	.timer {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
 	}
 </style>

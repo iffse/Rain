@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Task } from '@/lib/type'
+	import type { Task } from '@/lib/shared/type'
 	export let task: Task
 
 	import { createEventDispatcher } from 'svelte'
