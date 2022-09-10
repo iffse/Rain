@@ -75,7 +75,7 @@
 					class:is-active="{active === tab}"
 					on:click="{() => active = tab}"
 					>
-					<a>{tab}</a>
+					<a href={null}>{tab}</a>
 				</li>
 			{/each}
 		</ul>

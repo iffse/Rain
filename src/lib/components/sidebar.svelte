@@ -23,7 +23,7 @@
 	<ul class="menu-list">
 		<li>
 			{#each specialTabs as tab}
-				<a
+				<a href={null}
 					class:is-active="{active === tab}"
 					on:click="{() => active = tab}"
 					>
@@ -38,7 +38,7 @@
 	<ul class="menu-list">
 		{#each tasklists as tasklist}
 			<li>
-				<a
+				<a href={null}
 					class:is-active="{active === tasklist}"
 					on:click="{() => active = tasklist}"
 					>

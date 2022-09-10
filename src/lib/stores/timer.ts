@@ -2,11 +2,15 @@ import { writable } from 'svelte/store'
 import { sendNotification } from '@tauri-apps/api/notification'
 
 // seconds
-let workTime = 25 * 60
+let focusTime = 25 * 60
 let breakTime = 5 * 60
 let longBreakTime = 15 * 60
 
-export const remainingTime = writable(workTime)
+// let focus = new Audio('@/assets/audio/Focus.mp3')
+// let shortBreak = new Audio('@/assets/audio/ShortBreak.mp3')
+// let longBreak = new Audio('@/assets/audio/LongBreak.mp3')
+
+export const remainingTime = writable(focusTime)
 export const active = writable(false)
 export const paused = writable(false)
 export const compleatedCount = writable(0)
@@ -27,15 +31,18 @@ export function startTimer() {
 						if (isBreak === false) {
 							if (count % 4 === 0) {
 								nextTime = longBreakTime
+								// longBreak.play()
 							} else {
 								nextTime = breakTime
+								// shortBreak.play()
 							}
 							sendNotification({
 								title: 'Break Time',
 								body: 'Take a break',
 							})
 						} else {
-							nextTime = workTime
+							nextTime = focusTime
+							// focus.play()
 							sendNotification({
 								title: 'Work Time',
 								body: 'Get back to work',
@@ -67,11 +74,11 @@ export function stopTimer() {
 				return count
 			})
 		} else {
-			remainingTime.set(workTime)
+			remainingTime.set(focusTime)
 		}
 		return isBreak
 	})
-	remainingTime.set(workTime)
+	remainingTime.set(focusTime)
 }
 
 export function pauseTimer() {

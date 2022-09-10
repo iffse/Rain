@@ -35,7 +35,6 @@
 		{/if}
 	</div>
 
-
 </div>
 <style>
 	.buttons {
