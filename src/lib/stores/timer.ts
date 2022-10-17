@@ -1,20 +1,15 @@
 import { writable } from 'svelte/store'
-import { sendNotification } from '@tauri-apps/api/notification'
+import { invoke } from '@tauri-apps/api'
 
-// seconds
-let focusTime = 25 * 60
-let breakTime = 5 * 60
-let longBreakTime = 15 * 60
+// let startTime = await invoke('get_timer_parameters')
 
-// let focus = new Audio('@/assets/audio/Focus.mp3')
-// let shortBreak = new Audio('@/assets/audio/ShortBreak.mp3')
-// let longBreak = new Audio('@/assets/audio/LongBreak.mp3')
 
-export const remainingTime = writable(focusTime)
+export const remainingTime = writable(0)
 export const active = writable(false)
 export const paused = writable(false)
 export const compleatedCount = writable(0)
-export const isBreak = writable(false)
+
+update_parameters()
 
 let countDown: NodeJS.Timer
 
@@ -22,63 +17,21 @@ export function startTimer() {
 	active.set(true)
 	paused.set(false)
 
-	countDown = setInterval(() => {
-		remainingTime.update(time => {
-			if (time === 0 ) {
-				let nextTime: number
-				compleatedCount.update(count => {
-					isBreak.update(isBreak => {
-						if (isBreak === false) {
-							if (++count=== 0) {
-								nextTime = longBreakTime
-								// longBreak.play()
-							} else {
-								nextTime = breakTime
-								// shortBreak.play()
-							}
-							sendNotification({
-								title: 'Break Time',
-								body: 'Take a break',
-							})
-						} else {
-							nextTime = focusTime
-							// focus.play()
-							sendNotification({
-								title: 'Work Time',
-								body: 'Get back to work',
-							})
-						}
-						return !isBreak
-					})
-					return count
-				})
-				return nextTime
-			}
-			return time - 1
-		})
+	countDown = setInterval(async () => {
+		// let remaining: number = await invoke('update_timer')
+		let remaining: number = await invoke('timer_update')
+		if (remaining <= 0) {
+			update_parameters()
+		}
+		remainingTime.set(remaining)
 		}, 1000)
 }
 
-export function stopTimer() {
+export async function stopTimer() {
 	active.set(false)
 	paused.set(false)
 	clearInterval(countDown)
-	isBreak.update(isBreak => {
-		if (isBreak) {
-			compleatedCount.update(count => {
-				if (count % 4 === 0) {
-					remainingTime.set(longBreakTime)
-				} else {
-					remainingTime.set(breakTime)
-				}
-				return count
-			})
-		} else {
-			remainingTime.set(focusTime)
-		}
-		return isBreak
-	})
-	remainingTime.set(focusTime)
+	remainingTime.set(await invoke('timer_reset'))
 }
 
 export function pauseTimer() {
@@ -86,6 +39,13 @@ export function pauseTimer() {
 	clearInterval(countDown)
 }
 
-export function skipTimer() {
-	remainingTime.set(0)
+export async function skipTimer() {
+	invoke('timer_skip')
+	update_parameters()
+}
+
+async function update_parameters() {
+	let parameters = await invoke('timer_get_parameters')
+	remainingTime.set(parameters[0])
+	compleatedCount.set(parameters[1])
 }
