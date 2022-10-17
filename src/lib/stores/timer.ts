@@ -29,7 +29,7 @@ export function startTimer() {
 				compleatedCount.update(count => {
 					isBreak.update(isBreak => {
 						if (isBreak === false) {
-							if (count % 4 === 0) {
+							if (++count=== 0) {
 								nextTime = longBreakTime
 								// longBreak.play()
 							} else {
@@ -50,7 +50,7 @@ export function startTimer() {
 						}
 						return !isBreak
 					})
-					return count + 1
+					return count
 				})
 				return nextTime
 			}
@@ -84,4 +84,8 @@ export function stopTimer() {
 export function pauseTimer() {
 	paused.set(true)
 	clearInterval(countDown)
+}
+
+export function skipTimer() {
+	remainingTime.set(0)
 }

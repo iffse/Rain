@@ -46,7 +46,7 @@
 				</Icon>
 			{/if}
 			<Icon size={iconSize}>
-				<i class="fa-regular fa-forward" aria-hidden="true"></i>
+				<i class="fa-regular fa-forward" aria-hidden="true" on:click="{() => timer.skipTimer()}"></i>
 			</Icon>
 		{/if}
 	</div>
