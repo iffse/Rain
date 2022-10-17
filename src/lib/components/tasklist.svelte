@@ -68,17 +68,19 @@
 </script>
 
 <div class="tasklist">
-	<div class="tabs">
+	<div>
+		<div class="tabs">
 		<ul>
-			{#each tabs as tab}
-				<li
-					class:is-active="{active === tab}"
-					on:click="{() => active = tab}"
-					>
-					<a href={null}>{tab}</a>
-				</li>
-			{/each}
-		</ul>
+				{#each tabs as tab}
+					<li
+						class:is-active="{active === tab}"
+						on:click="{() => active = tab}"
+						>
+						<a href={null}>{tab}</a>
+					</li>
+				{/each}
+			</ul>
+		</div>
 	</div>
 
 	{#if active == tabs[0]}
@@ -86,8 +88,9 @@
 			{#each tasks.filter(t => !t.compleated) as task}
 				<Taskcard {task} on:mark="{() => mark(task)}" />
 			{/each}
+			<div class="space"> </div>
 		</div>
-		<input class="input" type="text" placeholder="Add a new task" style="bottom: 10px;"
+		<input class="input" type="text" placeholder="Add a new task"
 			on:keydown={e => e.key === 'Enter' && addTask(e.target)}>
 	{:else}
 		<div class="tasks">
@@ -107,5 +110,6 @@
 	.tasks {
 		overflow-y: scroll;
 		height: 100%;
+		margin-bottom: 20px;
 	}
 </style>
