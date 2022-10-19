@@ -3,6 +3,8 @@ use std::sync::Mutex;
 use tauri::command;
 use tauri::api::notification::Notification;
 
+use crate::audio::{play_audio};
+
 const FOCUS_TIME: u32= 25 * 60;
 const BREAK_TIME: u32 = 5 * 60;
 const LONG_BREAK_TIME: u32 = 15 * 60;
@@ -28,6 +30,7 @@ pub fn timer_update() -> u32 {
 				.title("Focus Time")
 				.body("Get back to work!")
 				.show().unwrap();
+			play_audio("focus");
 		} else {
 			*compleated_count += 1;
 			*is_break = true;
@@ -37,12 +40,14 @@ pub fn timer_update() -> u32 {
 					.title("Long Break")
 					.body("Take a long break!")
 					.show().unwrap();
+				play_audio("long_break");
 			} else {
 				*timer = BREAK_TIME;
 				Notification::new(&identifier)
 					.title("Break")
 					.body("Take a break!")
 					.show().unwrap();
+				play_audio("break");
 			}
 		}
 		*timer as u32
@@ -54,10 +59,11 @@ pub fn timer_update() -> u32 {
 
 #[command]
 // returning array
-pub fn timer_get_parameters() -> (u32, u32) {
+pub fn timer_get_parameters() -> (u32, bool, u32) {
 	let timer = TIMER.lock().unwrap();
 	let compleated_count = COMPLEATED_COUNT.lock().unwrap();
-	(*timer, *compleated_count)
+	let is_break = IS_BREAK.lock().unwrap();
+	(*timer, *is_break,*compleated_count)
 }
 
 #[command]
@@ -87,4 +93,8 @@ pub fn timer_reset() -> u32 {
 pub fn timer_skip() {
 	let mut timer = TIMER.lock().unwrap();
 	*timer = 0;
+	drop(timer);
+	timer_update();
 }
+
+

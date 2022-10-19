@@ -5,7 +5,7 @@
 	let m: string, s: string;
 	$: {
 		timer.remainingTime.subscribe((time) => {
-			m = Math.floor(time / 60).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false})
+			m = Math.floor(time / 60).toLocaleString('en-US', {minimumIntegerDigits: 1, useGrouping:false})
 			s = Math.floor(time % 60).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false})
 		})
 	}
@@ -16,6 +16,8 @@
 	$: timer.paused.subscribe((p) => paused = p)
 	let compleatedCount: number
 	$: timer.compleatedCount.subscribe((c) => compleatedCount = c)
+	let isBreak: boolean
+	$: timer.isBreak.subscribe((b) => isBreak = b)
 
 	let width: number
 
@@ -24,7 +26,7 @@
 
 <div class="timer" bind:clientWidth="{width}">
 	<h3 style="font-size: {width / 75}em">
-		{m}:{s}
+		{Number(m) > 0 ? `${m}:${s}` : s}
 	</h3>
 
 	<div class="buttons">
@@ -52,7 +54,10 @@
 	</div>
 
 	{#if compleatedCount > 0}
-	{compleatedCount} {compleatedCount < 2 ? 'round' : 'rounds'} compleated!
+		<p>{compleatedCount} {compleatedCount < 2 ? 'round' : 'rounds'} compleated!</p>
+		{#if isBreak}
+			<p>Time to take a break</p>
+		{/if}
 	{/if}
 </div>
 

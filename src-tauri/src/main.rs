@@ -6,6 +6,7 @@
 mod tasks;
 mod files;
 mod timer;
+mod audio;
 
 use tasks::new_task;
 use files::{get_filenames, write_file, load_file};
