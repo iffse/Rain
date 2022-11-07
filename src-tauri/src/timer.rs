@@ -3,7 +3,7 @@ use std::sync::Mutex;
 use tauri::command;
 use tauri::api::notification::Notification;
 
-use crate::audio::{play_audio};
+use crate::audio::play_audio;
 
 const FOCUS_TIME: u32= 25 * 60;
 const BREAK_TIME: u32 = 5 * 60;
